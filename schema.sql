@@ -2,28 +2,28 @@ CREATE DATABASE IF NOT EXISTS cs353hw4db;
 USE cs353hw4db;
 CREATE TABLE User (
     id int,
-    password varchar(255),
+    `password` varchar(255),
     username varchar(255),
     email varchar(255),
-    primary key (id),
+    PRIMARY KEY (id)
+);
+CREATE TABLE TaskType (
+    `type` varchar(255),
+    PRIMARY KEY (`type`)
 );
 CREATE TABLE Task (
     id int,
     title varchar(255),
-    description text,
-    status varchar(255),
+    `description` text,
+    `status` varchar(255),
     deadline datetime,
     creation_time datetime,
     done_time datetime,
     user_id int,
     task_type varchar(255),
-    primary key(id),
-    foreign key (user_id) references User,
-    foreign key (task_type) references TaskType,
-);
-CREATE TYPE TaskType (
-    type varchar(255),
-    primary key(type),
+    PRIMARY KEY (id),
+    FOREIGN KEY (user_id) REFERENCES User(id),
+    FOREIGN KEY (task_type) REFERENCES TaskType(`type`)
 );
 
 insert into User
