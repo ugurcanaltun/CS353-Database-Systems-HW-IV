@@ -65,20 +65,35 @@ def register():
         message = 'Please fill all the fields!'
     return render_template('register.html', message = message)
 
-@app.route('/tasks', methods =['GET', 'POST'])
+@app.route('/tasks', methods =['GET'])
 def tasks():
-    message = ''
-    return render_template('tasks.html', message=message)
+    cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Todo"', str(session['userid']))
+    remainingTasks = cursor.fetchall()
+    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Done"', str(session['userid']))
+    completedTasks = cursor.fetchall()
+    return render_template('tasks.html', remainingTasks=remainingTasks, completedTasks=completedTasks)
 
-@app.route('/analysis', methods =['GET', 'POST'])
+@app.route('/analysis', methods =['GET'])
 def analysis():
     message = ''
     return render_template('tasks.html', message=message)
 
-@app.route('/addtask', methods =['GET', 'POST'])
+@app.route('/addtask', methods =['POST'])
 def addTask():
-    message = ""
-    return render_template("addtask.html",message=message)
+    return "Add Task"
+
+@app.route('/completeTask', methods =['POST'])
+def completeTask():
+    return "Complete Task"
+
+@app.route('/deletetask', methods =['POST'])
+def deleteTask():
+    return "Delete Task"
+
+@app.route('/edittask', methods =['POST'])
+def editTask():
+    return "Edit Task"
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

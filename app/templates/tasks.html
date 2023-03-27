@@ -3,7 +3,7 @@
 {% block content %}
     <h1>{% block title %} Tasks {% endblock %}</h1>
     <h2>Remaining Tasks</h2>
-    <table>
+    <table border="3" cellpadding ="10">
         <thead>
             <tr>
                 <th>ID</th>
@@ -19,14 +19,9 @@
         <tbody>
             {% for row in remainingTasks %}
                 <tr>
-                    <td>{{ row[0] }}</td>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                    <td>{{ row[4] }}</td>
-                    <td>{{ row[5] }}</td>
-                    <td>{{ row[6] }}</td>
-                    <td>{{ row[8] }}</td>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
                     <td>
                         <form method="POST" action="{{ url_for('completeTask') }}">
                           <input type="hidden" name="id" value="{{ row[0] }}">
@@ -40,7 +35,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action="{{ url_for('deteTask') }}">
+                        <form method="POST" action="{{ url_for('deleteTask') }}">
                           <input type="hidden" name="id" value="{{ row[0] }}">
                           <button type="submit">Delete</button>
                         </form>
@@ -50,7 +45,7 @@
         </tbody>
     </table>
     <h2>Completed Tasks</h2>
-    <table>
+    <table border="3" cellpadding ="10">
         <thead>
             <tr>
                 <th>ID</th>
@@ -66,14 +61,9 @@
         <tbody>
             {% for row in completedTasks %}
                 <tr>
-                    <td>{{ row[0] }}</td>
-                    <td>{{ row[1] }}</td>
-                    <td>{{ row[2] }}</td>
-                    <td>{{ row[3] }}</td>
-                    <td>{{ row[4] }}</td>
-                    <td>{{ row[5] }}</td>
-                    <td>{{ row[6] }}</td>
-                    <td>{{ row[8] }}</td>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
                     <td>
                         <form method="POST" action="{{ url_for('completeTask') }}">
                           <input type="hidden" name="id" value="{{ row[0] }}">
@@ -87,7 +77,7 @@
                         </form>
                     </td>
                     <td>
-                        <form method="POST" action="{{ url_for('deteTask') }}">
+                        <form method="POST" action="{{ url_for('deleteTask') }}">
                           <input type="hidden" name="id" value="{{ row[0] }}">
                           <button type="submit">Delete</button>
                         </form>
