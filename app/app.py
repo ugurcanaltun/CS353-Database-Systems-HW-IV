@@ -67,11 +67,18 @@ def register():
 
 @app.route('/tasks', methods =['GET', 'POST'])
 def tasks():
-    return "Tasks page"
+    message = ''
+    return render_template('tasks.html', message=message)
 
 @app.route('/analysis', methods =['GET', 'POST'])
 def analysis():
-    return "Analysis page"
+    message = ''
+    return render_template('tasks.html', message=message)
+
+@app.route('/addtask', methods =['GET', 'POST'])
+def addTask():
+    message = ""
+    return render_template("addtask.html",message=message)
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))

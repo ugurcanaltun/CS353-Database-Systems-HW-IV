@@ -1,18 +1,18 @@
 CREATE DATABASE IF NOT EXISTS cs353hw4db;
 USE cs353hw4db;
 CREATE TABLE User (
-    id int,
-    `password` varchar(255),
-    username varchar(255),
-    email varchar(255),
+    id int NOT NULL UNIQUE,
+    `password` varchar(255) NOT NULL,
+    username varchar(255) NOT NULL,
+    email varchar(255) NOT NULL,
     PRIMARY KEY (id)
 );
 CREATE TABLE TaskType (
-    `type` varchar(255),
+    `type` varchar(255) NOT NULL UNIQUE,
     PRIMARY KEY (`type`)
 );
 CREATE TABLE Task (
-    id int,
+    id int NOT NULL UNIQUE,
     title varchar(255),
     `description` text,
     `status` varchar(255),

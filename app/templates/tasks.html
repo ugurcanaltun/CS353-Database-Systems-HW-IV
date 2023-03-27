@@ -1,0 +1,122 @@
+{% extends 'basemain.html' %}
+
+{% block content %}
+    <h1>{% block title %} Tasks {% endblock %}</h1>
+    <h2>Remaining Tasks</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Creation Time</th>
+                <th>Done Time</th>
+                <th>Task Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in remainingTasks %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[8] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('completeTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Done</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('editTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Edit</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('deteTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>Completed Tasks</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Deadline</th>
+                <th>Creation Time</th>
+                <th>Done Time</th>
+                <th>Task Type</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in completedTasks %}
+                <tr>
+                    <td>{{ row[0] }}</td>
+                    <td>{{ row[1] }}</td>
+                    <td>{{ row[2] }}</td>
+                    <td>{{ row[3] }}</td>
+                    <td>{{ row[4] }}</td>
+                    <td>{{ row[5] }}</td>
+                    <td>{{ row[6] }}</td>
+                    <td>{{ row[8] }}</td>
+                    <td>
+                        <form method="POST" action="{{ url_for('completeTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Done</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('editTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Edit</button>
+                        </form>
+                    </td>
+                    <td>
+                        <form method="POST" action="{{ url_for('deteTask') }}">
+                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <button type="submit">Delete</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+    <h3>Add a Task</h3>
+    <form action="{{ url_for('addTask') }}" method="post">
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="title" class="form-control" id="title" name="title" placeholder="Enter title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="description" class="form-control" id="description" name="description" placeholder="Enter description">
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input type="deadline" class="form-control" id="deadline" name="deadline" placeholder="Enter deadline"> 
+        </div>
+        <div class="form-group"> 
+            <label for="taskType">Task Type</label>
+            <input type="taskType" class="form-control" id="taskType" name="taskType" placeholder="Enter task's type">
+        </div>
+        <div style="margin-top: 20px">
+			<button type="submit" class="btn btn-primary">Add Task</button>
+		</div>   
+    </form>
+
+{% endblock %}
