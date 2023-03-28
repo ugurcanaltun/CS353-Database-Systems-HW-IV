@@ -5,4 +5,93 @@
     {% if message is defined and message %}
         <div class="alert alert-warning">{{ message }}</div>
     {% endif %}
+    <h2>Title and Latency of the Tasks That Were Completed After Their Deadlines</h2>
+    <table border="3" cellpadding ="10">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Latency</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in analysis1 %}
+                <tr>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>The Average Task Completion Time of the User</h2>
+    <table border="3" cellpadding ="10">
+        <thead>
+            <tr>
+                <th>Average Task Completion Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in analysis2 %}
+                <tr>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>The Number of the Completed Tasks per Task Type</h2>
+    <table border="3" cellpadding ="10">
+        <thead>
+            <tr>
+                <th>Task Type</th>
+                <th>The Number of the Completed Tasks</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in analysis3 %}
+                <tr>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>The Title and Deadline of Uncompleted Tasks</h2>
+    <table border="3" cellpadding ="10">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Deadline</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in analysis4 %}
+                <tr>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <h2>The Title and Task Completion Time of the Top 2 Completed Tasks That Took the Most Time</h2>
+    <table border="3" cellpadding ="10">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Task Completion Time</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for row in analysis5 %}
+                <tr>
+                    {% for column in row %}
+                    <td>{{ row[column] }}</td>
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}

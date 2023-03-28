@@ -1,0 +1,34 @@
+{% extends 'basemain.html' %}
+
+
+{% block content %}
+    <h1>{% block title %} Edit Task {% endblock %}</h1>
+    {% if message is defined and message %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
+    <form action="{{ url_for('edit') }}" method="post">
+        <div class="form-group">
+            <label for="taskId">Task ID: {{ taskId }}</label>
+            <input type="hidden" name="taskId" id="taskId" value="{{ taskId }}"></input>
+        </div>
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input type="title" class="form-control" id="title" name="title" placeholder="Enter title">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="description" class="form-control" id="description" name="description" placeholder="Enter description">
+        </div>
+        <div class="form-group">
+            <label for="deadline">Deadline</label>
+            <input type="deadline" class="form-control" id="deadline" name="deadline" placeholder="Enter deadline"> 
+        </div>
+        <div class="form-group"> 
+            <label for="taskType">Task Type</label>
+            <input type="taskType" class="form-control" id="taskType" name="taskType" placeholder="Enter task's type">
+        </div>
+        <div style="margin-top: 20px">
+			<button type="submit" class="btn btn-primary">Edit Task</button>
+		</div>   
+    </form>
+{% endblock %}

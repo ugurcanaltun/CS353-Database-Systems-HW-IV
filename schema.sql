@@ -13,14 +13,14 @@ CREATE TABLE TaskType (
 );
 CREATE TABLE Task (
     id int NOT NULL UNIQUE AUTO_INCREMENT,
-    title varchar(255),
+    title varchar(255) NOT NULL,
     `description` text,
-    `status` varchar(255),
-    deadline datetime,
-    creation_time datetime,
+    `status` varchar(255) NOT NULL,
+    deadline datetime NOT NULL,
+    creation_time datetime NOT NULL,
     done_time datetime,
-    user_id int,
-    task_type varchar(255),
+    user_id int NOT NULL,
+    task_type varchar(255) NOT NULL,
     PRIMARY KEY (id),
     FOREIGN KEY (user_id) REFERENCES User(id),
     FOREIGN KEY (task_type) REFERENCES TaskType(`type`)
