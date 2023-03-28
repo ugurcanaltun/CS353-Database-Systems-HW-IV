@@ -2,6 +2,9 @@
 
 {% block content %}
     <h1>{% block title %} Tasks {% endblock %}</h1>
+    {% if message is defined and message %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
     <h2>Remaining Tasks</h2>
     <table border="3" cellpadding ="10">
         <thead>
@@ -24,19 +27,19 @@
                     {% endfor %}
                     <td>
                         <form method="POST" action="{{ url_for('completeTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Done</button>
                         </form>
                     </td>
                     <td>
                         <form method="POST" action="{{ url_for('editTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Edit</button>
                         </form>
                     </td>
                     <td>
                         <form method="POST" action="{{ url_for('deleteTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Delete</button>
                         </form>
                     </td>
@@ -65,20 +68,14 @@
                     <td>{{ row[column] }}</td>
                     {% endfor %}
                     <td>
-                        <form method="POST" action="{{ url_for('completeTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
-                          <button type="submit">Done</button>
-                        </form>
-                    </td>
-                    <td>
                         <form method="POST" action="{{ url_for('editTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Edit</button>
                         </form>
                     </td>
                     <td>
                         <form method="POST" action="{{ url_for('deleteTask') }}">
-                          <input type="hidden" name="id" value="{{ row[0] }}">
+                          <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Delete</button>
                         </form>
                     </td>

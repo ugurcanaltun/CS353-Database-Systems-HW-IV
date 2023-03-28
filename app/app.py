@@ -1,6 +1,7 @@
 
 import re  
 import os
+from datetime import datetime
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -65,31 +66,69 @@ def register():
         message = 'Please fill all the fields!'
     return render_template('register.html', message = message)
 
-@app.route('/tasks', methods =['GET'])
+@app.route('/tasks', methods =['GET', 'POST'])
 def tasks():
+    message = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Todo"', str(session['userid']))
+    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Todo"', (str(session['userid']),))
     remainingTasks = cursor.fetchall()
-    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Done"', str(session['userid']))
+    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Done"', (str(session['userid']),))
     completedTasks = cursor.fetchall()
-    return render_template('tasks.html', remainingTasks=remainingTasks, completedTasks=completedTasks)
+    if not completedTasks:
+        message = 'You have not completed any tasks'
+    if not remainingTasks:
+        message = 'You have completed all of your tasks'
+    if not remainingTasks or not completedTasks:
+        message = 'You have no tasks at all'
+    return render_template('tasks.html', remainingTasks=remainingTasks, completedTasks=completedTasks, message=message)
 
-@app.route('/analysis', methods =['GET'])
+@app.route('/analysis', methods =['GET', 'POST'])
 def analysis():
     message = ''
     return render_template('tasks.html', message=message)
 
 @app.route('/addtask', methods =['POST'])
 def addTask():
-    return "Add Task"
-
+    if request.method == 'POST' and 'title' in request.form and 'description' in request.form and 'deadline' in request.form and 'taskType' in request.form:
+        title = request.form["title"]
+        description = request.form["description"]
+        deadline = request.form["deadline"]
+        taskType = request.form["taskType"]
+        now = datetime.now()
+        creationTime = now.strftime("%Y-%m-%d %H:%M:%S")
+        userId = str(session['userid'])
+        
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        if title or description or deadline or taskType:
+            cursor.execute('INSERT INTO Task (id, title, description, status, deadline, creation_time, done_time, user_id, task_type) VALUES (NULL, %s, %s, %s, %s, %s, NULL, %s, %s)', (title,description,"Todo",deadline,creationTime,userId,taskType,))
+            mysql.connection.commit()
+    return redirect('/tasks')
+            
 @app.route('/completeTask', methods =['POST'])
 def completeTask():
-    return "Complete Task"
+    if request.method == 'POST' and 'id' in request.form:
+        taskId = request.form["id"]
+        now = datetime.now()
+        creationTime = now.strftime("%Y-%m-%d %H:%M:%S")
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        if taskId:
+            cursor.execute('UPDATE Task set status = "Done" where id = %s', (taskId,))
+            cursor.execute('UPDATE Task set done_time = %s where id = %s', (creationTime, taskId,))
+            mysql.connection.commit()
+    return redirect('/tasks')
 
 @app.route('/deletetask', methods =['POST'])
 def deleteTask():
-    return "Delete Task"
+    if request.method == 'POST' and 'id' in request.form:
+        taskId = request.form["id"]
+        cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
+        
+        if taskId:
+            cursor.execute('DELETE FROM Task where id = %s', (taskId,))
+            mysql.connection.commit()
+    return redirect('/tasks')
 
 @app.route('/edittask', methods =['POST'])
 def editTask():

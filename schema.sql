@@ -1,7 +1,7 @@
 CREATE DATABASE IF NOT EXISTS cs353hw4db;
 USE cs353hw4db;
 CREATE TABLE User (
-    id int NOT NULL UNIQUE,
+    id int NOT NULL UNIQUE AUTO_INCREMENT,
     `password` varchar(255) NOT NULL,
     username varchar(255) NOT NULL,
     email varchar(255) NOT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE TaskType (
     PRIMARY KEY (`type`)
 );
 CREATE TABLE Task (
-    id int NOT NULL UNIQUE,
+    id int NOT NULL UNIQUE AUTO_INCREMENT,
     title varchar(255),
     `description` text,
     `status` varchar(255),

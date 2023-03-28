@@ -2,4 +2,7 @@
 
 {% block content %}
     <h1>{% block title %} Analysis {% endblock %}</h1>
+    {% if message is defined and message %}
+        <div class="alert alert-warning">{{ message }}</div>
+    {% endif %}
 {% endblock %}
