@@ -1,7 +1,6 @@
 
 import re  
 import os
-from datetime import datetime, timedelta
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_mysqldb import MySQL
 import MySQLdb.cursors
@@ -80,7 +79,7 @@ def register():
 def tasks():
     message = ''
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s ORDER BY deadline asc', (str(session['userid']),))
+    cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s ORDER BY abs(timestampdiff(SECOND,deadline,convert_tz(now(), "system", "+3:00"))) asc', (str(session['userid']),))
     allTasks = cursor.fetchall()
     cursor.execute('SELECT id,title,description,`status`,deadline,creation_time,done_time,task_type FROM Task WHERE user_id = %s AND `status` = "Done" ORDER BY done_time desc', (str(session['userid']),))
     completedTasks = cursor.fetchall()
@@ -128,6 +127,8 @@ def addTask():
         
         if not title or not description or not deadline or not taskType:
             session['message'] = 'Please fill all the fields!'
+        elif taskType and not (taskType == "Health" or taskType == "Job" or taskType == "Lifestyle" or taskType == "Family" or taskType == "Hobbies"):
+            session['message'] = "Error: Task Type must be one of the following: 'Health', 'Job', 'Lifestyle', 'Family', 'Hobbies'"
         else:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute('INSERT INTO Task (id, title, description, status, deadline, creation_time, done_time, user_id, task_type) VALUES (NULL, %s, %s, %s, %s, convert_tz(now(), "system", "+3:00"), NULL, %s, %s)', (title,description,"Todo",deadline,userId,taskType,))
@@ -177,24 +178,36 @@ def editTask():
 
 @app.route('/edit', methods = ['POST'])
 def edit():
-    if request.method == 'POST' and 'taskId' in request.form and ('title' in request.form or 'description' in request.form or 'deadline' in request.form or 'taskType' in request.form):
+    if request.method == 'POST' and 'taskId' in request.form and ('title' in request.form or 'description' in request.form or 'deadline' in request.form or 'taskType' in request.form or 'status' in request.form):
         cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
         taskId = request.form["taskId"]
         title = request.form["title"]
         description = request.form["description"]
         deadline = request.form["deadline"]
         taskType = request.form["taskType"]
-    
-        if title:
-            cursor.execute('UPDATE Task set title = %s where id = %s',(title,taskId))
-        if description:
-            cursor.execute('UPDATE Task set description = %s where id = %s',(description,taskId))
-        if deadline:
-            cursor.execute('UPDATE Task set deadline = %s where id = %s',(deadline,taskId))
-        if taskType:
-            cursor.execute('UPDATE Task set task_type = %s where id = %s',(taskType,taskId))
-        mysql.connection.commit()
-        session['message'] = "Task no " + taskId + " is edited successfully"
+        status = request.form["status"]
+        
+        if status and not (status == "Done" or status == "Todo"):
+            session['message'] = "Error: Status must be 'Done' or 'Todo'"
+        elif taskType and not (taskType == "Health" or taskType == "Job" or taskType == "Lifestyle" or taskType == "Family" or taskType == "Hobbies"):
+            session['message'] = "Error: Task Type must be one of the following: 'Health', 'Job', 'Lifestyle', 'Family', 'Hobbies'"
+        else:
+            if title:
+                cursor.execute('UPDATE Task set title = %s where id = %s',(title,taskId))
+            if description:
+                cursor.execute('UPDATE Task set description = %s where id = %s',(description,taskId))
+            if deadline:
+                cursor.execute('UPDATE Task set deadline = %s where id = %s',(deadline,taskId))
+            if status and status == "Todo":
+                cursor.execute('UPDATE Task set status = %s where id = %s', (status, taskId,))
+                cursor.execute('UPDATE Task set done_time = NULL where id = %s', (taskId,))
+            if status and status == "Done":
+                cursor.execute('UPDATE Task set status = "Done" where id = %s', (taskId,))
+                cursor.execute('UPDATE Task set done_time = convert_tz(now(), "system", "+3:00") where id = %s', (taskId,))
+            if taskType:
+                cursor.execute('UPDATE Task set task_type = %s where id = %s',(taskType,taskId))
+            mysql.connection.commit()
+            session['message'] = "Task no " + taskId + " is edited successfully"
     else:
         session['message'] = "Task could not be edited"
     return redirect(url_for('tasks'))
