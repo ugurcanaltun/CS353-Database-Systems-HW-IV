@@ -25,12 +25,14 @@
                     {% for column in row %}
                     <td>{{ row[column] }}</td>
                     {% endfor %}
+                    {% if row['status'] == 'Todo' %}
                     <td>
                         <form method="POST" action="{{ url_for('completeTask') }}">
                           <input type="hidden" name="id" id="id" value="{{ row['id'] }}">
                           <button type="submit">Done</button>
                         </form>
                     </td>
+                    {% endif %}
                     <td>
                         <form method="POST" action="{{ url_for('editTask') }}">
                           <input type="hidden" name="id" id="id" value="{{ row['id'] }}">

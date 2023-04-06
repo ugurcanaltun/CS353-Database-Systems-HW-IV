@@ -124,15 +124,13 @@ def addTask():
         description = request.form["description"]
         deadline = request.form["deadline"]
         taskType = request.form["taskType"]
-        now = datetime.now() + timedelta(hours = 3)
-        creationTime = now.strftime("%Y-%m-%d %H:%M:%S")
         userId = str(session['userid'])
         
         if not title or not description or not deadline or not taskType:
             session['message'] = 'Please fill all the fields!'
         else:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
-            cursor.execute('INSERT INTO Task (id, title, description, status, deadline, creation_time, done_time, user_id, task_type) VALUES (NULL, %s, %s, %s, %s, %s, NULL, %s, %s)', (title,description,"Todo",deadline,creationTime,userId,taskType,))
+            cursor.execute('INSERT INTO Task (id, title, description, status, deadline, creation_time, done_time, user_id, task_type) VALUES (NULL, %s, %s, %s, %s, convert_tz(now(), "system", "+3:00"), NULL, %s, %s)', (title,description,"Todo",deadline,userId,taskType,))
             mysql.connection.commit()
             session['message'] = "Task is added successfully"
     return redirect(url_for('tasks'))
@@ -141,13 +139,11 @@ def addTask():
 def completeTask():
     if request.method == 'POST' and 'id' in request.form:
         taskId = request.form["id"]
-        now = datetime.now() + timedelta(hours = 3)
-        creationTime = now.strftime("%Y-%m-%d %H:%M:%S")
         
         if taskId:
             cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute('UPDATE Task set status = "Done" where id = %s', (taskId,))
-            cursor.execute('UPDATE Task set done_time = %s where id = %s', (creationTime, taskId,))
+            cursor.execute('UPDATE Task set done_time = convert_tz(now(), "system", "+3:00") where id = %s', (taskId,))
             mysql.connection.commit()
             session['message'] = "Task no " + taskId + " is completed successfully"
         else:
