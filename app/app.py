@@ -100,14 +100,20 @@ def analysis():
     cursor = mysql.connection.cursor(MySQLdb.cursors.DictCursor)
     cursor.execute('SELECT title, timestampdiff(SECOND,deadline,done_time) AS latency FROM Task WHERE user_id = %s AND done_time > deadline',(userId))
     analysis1 = cursor.fetchall()
+    for analysis in analysis1:
+        analysis['latency'] = displayTime(analysis['latency'])
     cursor.execute('SELECT avg(timestampdiff(SECOND,creation_time,done_time)) as avgTaskCompletion FROM Task WHERE user_id = %s AND done_time IS NOT NULL',(userId))
     analysis2 = cursor.fetchall()
+    for analysis in analysis2:
+        analysis['avgTaskCompletion'] = displayTime(analysis['avgTaskCompletion'])
     cursor.execute('SELECT task_type, count(*) as numCompletedTasks FROM Task WHERE user_id = %s AND `status` = "Done" GROUP BY task_type ORDER BY numCompletedTasks desc',(userId))
     analysis3 = cursor.fetchall()
     cursor.execute('SELECT title, deadline FROM Task WHERE user_id = %s AND `status` = "Todo" ORDER BY deadline ASC',(userId))
     analysis4 = cursor.fetchall()
     cursor.execute('SELECT title, timestampdiff(SECOND,creation_time,done_time) as completionTime FROM Task where user_id = %s AND `status` = "Done" ORDER BY completionTime desc LIMIT 2',(userId))
     analysis5 = cursor.fetchall()
+    for analysis in analysis5:
+        analysis['completionTime'] = displayTime(analysis['completionTime'])
     message = 'Queries are fetched'
     return render_template('analysis.html', message=message, analysis1=analysis1, analysis2=analysis2, analysis3=analysis3, analysis4=analysis4, analysis5=analysis5)
 
@@ -196,6 +202,30 @@ def edit():
     else:
         session['message'] = "Task could not be edited"
     return redirect(url_for('tasks'))
+
+def displayTime(seconds):
+    seconds = int(seconds)
+    
+    timeIntervals = (
+        ('weeks', 604800),
+        ('days', 86400),   
+        ('hours', 3600),  
+        ('minutes', 60),
+        ('seconds', 1)
+    )
+    
+    result = []
+    
+    for timeName, countInSeconds in timeIntervals:
+        value = seconds // countInSeconds
+        if value:
+            seconds -= value * countInSeconds
+            if value == 1:
+                timeName = timeName.rstrip('s')
+            result.append("{} {}".format(value, timeName))
+            
+    return ', '.join(result[:])
+
 
 if __name__ == "__main__":
     port = int(os.environ.get('PORT', 5000))
